@@ -7,6 +7,8 @@ var vehicleSchema = new Schema({
     name: {type: String, required: true},
     pos_lat: {type: String, required: true},
     pos_lon: {type: String, required: true},
+    speed: {type: Number, default: 0},
+    timestamp: {type: String, required: true},
     history: []
     },
     {timestamps: true}

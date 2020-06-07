@@ -53,7 +53,7 @@ router.post('/create', function (req, res, next) {
   let data = req.body;
   //console.log(data);
 
-  var vehicle = new Vehicle({ uid: data.uid, name: data.name, pos_lat: data.pos_lat, pos_lon: data.pos_lon });
+  var vehicle = new Vehicle({ uid: data.uid, name: data.name, pos_lat: data.pos_lat, pos_lon: data.pos_lon, timestamp: Date.now() });
   
   vehicle.save().then((vehicle) => {
     const history_obj = { vehicle: vehicle, uid: data.uid, pos_lat: data.pos_lat, pos_lon: data.pos_lon, timestamp: Date.now() };
@@ -84,9 +84,16 @@ router.post('/update', async function (req, res, next) {
   let data = req.body;
   let vehicle = await Vehicle.findOne({ _id: data._id });
 
+  /**
+   * Speed Calculation
+   */
+  let speed = getVehicleSpeed(vehicle.pos_lat, vehicle.pos_lon, vehicle.timestamp, data.pos_lat, data.pos_lon, Date.now());
+  //console.log(speed);
   vehicle.name = data.name;
   vehicle.pos_lat = data.pos_lat;
   vehicle.pos_lon = data.pos_lon;
+  vehicle.timestamp = Date.now();
+  vehicle.speed = speed;
 
   const history_obj = { vehicle: vehicle, uid: data.uid, pos_lat: data.pos_lat, pos_lon: data.pos_lon, timestamp: Date.now() };
   const vehicle_history_obj = { vehicle: vehicle._id, uid: data.uid, pos_lat: data.pos_lat, pos_lon: data.pos_lon, timestamp: Date.now() };
