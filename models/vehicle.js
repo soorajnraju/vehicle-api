@@ -9,6 +9,7 @@ var vehicleSchema = new Schema({
     pos_lon: {type: String, required: true},
     speed: {type: Number, default: 0},
     timestamp: {type: String, required: true},
+    distance: {type: Number, default: 0},
     history: []
     },
     {timestamps: true}

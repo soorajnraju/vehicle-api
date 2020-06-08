@@ -54,7 +54,7 @@ router.post('/create', function (req, res, next) {
   //console.log(data);
 
   var vehicle = new Vehicle({ uid: data.uid, name: data.name, pos_lat: data.pos_lat, pos_lon: data.pos_lon, timestamp: Date.now() });
-  
+
   vehicle.save().then((vehicle) => {
     const history_obj = { vehicle: vehicle, uid: data.uid, pos_lat: data.pos_lat, pos_lon: data.pos_lon, timestamp: Date.now() };
     //vehicle.history.push(history_obj);
@@ -85,19 +85,21 @@ router.post('/update', async function (req, res, next) {
   let vehicle = await Vehicle.findOne({ _id: data._id });
 
   /**
-   * Speed Calculation
+   * Speed and distance calculation
    */
   let speed = getVehicleSpeed(vehicle.pos_lat, vehicle.pos_lon, vehicle.timestamp, data.pos_lat, data.pos_lon, Date.now());
+  let distance = getDistance(vehicle.pos_lat, vehicle.pos_lon, data.pos_lat, data.pos_lon);
   //console.log(speed);
   vehicle.name = data.name;
   vehicle.pos_lat = data.pos_lat;
   vehicle.pos_lon = data.pos_lon;
   vehicle.timestamp = Date.now();
   vehicle.speed = speed;
+  vehicle.distance = distance;
 
   const history_obj = { vehicle: vehicle, uid: data.uid, pos_lat: data.pos_lat, pos_lon: data.pos_lon, timestamp: Date.now() };
   const vehicle_history_obj = { vehicle: vehicle._id, uid: data.uid, pos_lat: data.pos_lat, pos_lon: data.pos_lon, timestamp: Date.now() };
-  
+
   const history = new History(history_obj);
 
   vehicle.history.push(vehicle_history_obj);
@@ -159,6 +161,20 @@ function getVehicleSpeed(lat1, lon1, t1, lat2, lon2, t2) {
   );
 
   return speed;
+}
+
+/**
+ * 
+ * @param {latitude 1} lat1 
+ * @param {longitude 1} lon1 
+ * @param {latitude 2} lat2 
+ * @param {longitude 2} lon2 
+ */
+function getDistance(lat1, lon1, lat2, lon2) {
+  return geolib.getDistance(
+    { latitude: lat1, longitude: lon1 },
+    { latitude: lat2, longitude: lon2 }
+  );
 }
 
 module.exports = router;
