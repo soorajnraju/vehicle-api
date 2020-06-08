@@ -2,9 +2,9 @@
 
 ### Installation
 
-### ```cd vehicle-api```
-### ```npm install```
-### ```npm start```
+```cd vehicle-api```
+```npm install```
+```npm start```
 
 open http://localhost:3000/ in your browser for verify the express API is running or not
 
